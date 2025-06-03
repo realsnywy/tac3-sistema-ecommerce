@@ -42,7 +42,26 @@ O sistema é composto pelas seguintes classes principais:
 
 ---
 
-## ▶️ Como Executar os Testes
+## ▶️ Como Executar o Projeto e os Testes
+
+### 1. Crie e ative um ambiente virtual
+
+```sh
+python -m venv .venv
+# Ative o ambiente virtual:
+# No Windows:
+.venv\Scripts\activate
+# No macOS/Linux:
+source .venv/bin/activate
+```
+
+### 2. Instale as dependências
+
+```sh
+pip install -r requirements.txt
+```
+
+### 3. Execute os testes
 
 - **Pytest:**
 
@@ -64,6 +83,19 @@ O sistema é composto pelas seguintes classes principais:
   python test/test_questao9.py
   python test/test_questao10_testify.py
   ```
+
+---
+
+## ▶️ Como Executar a Demonstração do Sistema
+
+Para executar uma demonstração do sistema de e-commerce, utilize o arquivo principal localizado em `app/ecommerce_sistema.py`. Siga os passos abaixo:
+
+```sh
+python app/ecommerce_sistema.py
+```
+
+Caso o arquivo aceite argumentos ou tenha um menu interativo, siga as instruções exibidas no terminal.
+Se desejar modificar ou criar um fluxo de demonstração personalizado, edite o arquivo `ecommerce_sistema.py` conforme necessário.
 
 ---
 
@@ -95,6 +127,8 @@ test/
 - pytest
 - unittest (builtin)
 - testify
+
+As dependências estão listadas em `requirements.txt`.
 
 ---
 

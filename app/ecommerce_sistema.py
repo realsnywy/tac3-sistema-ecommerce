@@ -140,6 +140,7 @@ class Carrinho:
             )
 
         self.itens[produto] = self.itens.get(produto, 0) + quantidade
+        print(f"Adicionado {quantidade}x '{produto.nome}' ao carrinho.")
 
     def remover_item(self, produto: Produto, quantidade: int = 1) -> None:
         if not isinstance(produto, Produto):
@@ -153,8 +154,10 @@ class Carrinho:
 
         if self.itens[produto] <= quantidade:
             del self.itens[produto]
+            print(f"Produto '{produto.nome}' removido do carrinho.")
         else:
             self.itens[produto] -= quantidade
+            print(f"Removido {quantidade}x '{produto.nome}' do carrinho.")
 
     def atualizar_quantidade_item(self, produto: Produto, nova_quantidade: int) -> None:
         if not isinstance(produto, Produto):
@@ -167,6 +170,7 @@ class Carrinho:
         if nova_quantidade == 0:
             if produto in self.itens:
                 del self.itens[produto]
+                print(f"Produto '{produto.nome}' removido do carrinho.")
             return
 
         if produto.quantidade_em_estoque < nova_quantidade:
@@ -177,6 +181,9 @@ class Carrinho:
 
         if nova_quantidade > 0:
             self.itens[produto] = nova_quantidade
+            print(
+                f"Quantidade de '{produto.nome}' atualizada para {nova_quantidade} no carrinho."
+            )
         elif produto in self.itens:  # nova_quantidade é 0 e produto existe
             del self.itens[produto]
 
@@ -196,6 +203,7 @@ class Carrinho:
 
     def limpar_carrinho(self) -> None:
         self.itens.clear()
+        print("Carrinho limpo com sucesso.")
 
     def get_itens(self) -> List[Tuple[Produto, int]]:
         return list(self.itens.items())
@@ -595,6 +603,7 @@ class SistemaEcommerce:
         )
         self.produtos_catalogo[novo_id] = produto
         self._proximo_id_produto += 1
+        print(f"Produto '{nome}' adicionado ao catálogo com ID {novo_id}.")
         return produto
 
     def recuperar_produto_por_id(self, id_produto: int) -> Optional[Produto]:
@@ -619,6 +628,7 @@ class SistemaEcommerce:
         if user_id in self.usuarios:
             raise ValueError(f"Usuário com ID '{user_id}' já existe.")
         self.usuarios[user_id] = dados_usuario
+        print(f"Usuário '{user_id}' registrado com sucesso.")
 
     def criar_pedido(
         self,
@@ -643,8 +653,12 @@ class SistemaEcommerce:
             )
             self.pedidos_registrados[novo_id_pedido] = pedido
             self._proximo_id_pedido += 1
+            print(
+                f"Pedido {novo_id_pedido} criado com sucesso para o cliente '{cliente_id}'."
+            )
             return pedido
-        except ValueError:
+        except ValueError as e:
+            print(f"Erro ao criar pedido: {e}")
             return None
 
     def processar_pagamento_pedido(
@@ -691,6 +705,7 @@ class SistemaEcommerce:
         )
 
         if resultado_pagamento["status"] == "aprovado":
+            print(f"Pagamento do pedido {id_pedido} aprovado.")
             pedido.registrar_pagamento(
                 resultado_pagamento["id_transacao"], valor_a_pagar
             )
@@ -711,8 +726,9 @@ class SistemaEcommerce:
                     f"{resultado_pagamento['mensagem']} Erro ao reduzir estoque: {e}"
                 )
         elif resultado_pagamento["status"] in ["rejeitado", "erro"]:
-            pass
-
+            print(
+                f"Pagamento do pedido {id_pedido} falhou: {resultado_pagamento['mensagem']}"
+            )
         return resultado_pagamento
 
     def cancelar_pedido(
@@ -720,6 +736,7 @@ class SistemaEcommerce:
     ) -> bool:
         pedido = self.pedidos_registrados.get(id_pedido)
         if not pedido:
+            print(f"Pedido {id_pedido} não encontrado para cancelamento.")
             return False
 
         status_anterior = pedido.status_pedido
@@ -731,7 +748,9 @@ class SistemaEcommerce:
                     )
                     if produto_catalogo:
                         produto_catalogo.adicionar_estoque(quantidade_comprada)
+            print(f"Pedido {id_pedido} cancelado com sucesso. Motivo: {motivo}")
             return True
+        print(f"Não foi possível cancelar o pedido {id_pedido}.")
         return False
 
     def gerar_relatorio_vendas(self, status_filtro: Optional[str] = None) -> Dict:
@@ -759,3 +778,68 @@ class SistemaEcommerce:
             ),
             "lista_pedidos_no_relatorio": pedidos_filtrados,
         }
+
+
+if __name__ == "__main__":
+    print("==== Demonstração do Sistema de E-commerce ====\n")
+
+    # Instancia o sistema
+    sistema = SistemaEcommerce()
+
+    # Adiciona produtos ao catálogo
+    prod1 = sistema.adicionar_produto_catalogo(
+        nome="Notebook Dell",
+        descricao="Notebook 15 polegadas, 8GB RAM, 256GB SSD",
+        preco=3500.0,
+        quantidade_em_estoque=5,
+        categoria="Informática",
+    )
+    prod2 = sistema.adicionar_produto_catalogo(
+        nome="Mouse Logitech",
+        descricao="Mouse sem fio, alta precisão",
+        preco=120.0,
+        quantidade_em_estoque=10,
+        categoria="Acessórios",
+    )
+
+    # Registra dois usuários
+    sistema.registrar_usuario("cliente1", {"nome": "Maria", "email": "maria@email.com"})
+    sistema.registrar_usuario("cliente2", {"nome": "João", "email": "joao@email.com"})
+
+    # Cliente 1 faz um carrinho e compra
+    print("\n--- Cliente 1 realizando compra ---")
+    carrinho1 = Carrinho()
+    carrinho1.adicionar_item(prod1, 1)
+    carrinho1.adicionar_item(prod2, 2)
+    endereco1 = {"rua": "Rua das Flores, 100", "cep": "12345-000"}
+    pedido1 = sistema.criar_pedido("cliente1", carrinho1, endereco1, "pix")
+    if pedido1:
+        resultado_pag1 = sistema.processar_pagamento_pedido(
+            pedido1.id_pedido, {"chave_pix": "maria@pix.com"}
+        )
+        print(resultado_pag1)
+        print(pedido1.gerar_nota_fiscal())
+
+    print("\n" + "=" * 50 + "\n")
+
+    # Cliente 2 faz um carrinho e compra
+    print("--- Cliente 2 realizando compra ---")
+    carrinho2 = Carrinho()
+    carrinho2.adicionar_item(prod2, 3)
+    endereco2 = {"rua": "Av. Central, 200", "cep": "54321-000"}
+    pedido2 = sistema.criar_pedido("cliente2", carrinho2, endereco2, "cartao_credito")
+    if pedido2:
+        resultado_pag2 = sistema.processar_pagamento_pedido(
+            pedido2.id_pedido,
+            {"numero_cartao": "1234-5678-9012-3456", "numero_parcelas": 2},
+        )
+        print(resultado_pag2)
+        print(pedido2.gerar_nota_fiscal())
+
+    print("\nRelatório de vendas:")
+    relatorio = sistema.gerar_relatorio_vendas()
+    print(f"Total de vendas: R${relatorio['total_vendas_apuradas']:.2f}")
+    print(f"Número de pedidos: {relatorio['numero_de_pedidos_contabilizados']}")
+    print("Pedidos contabilizados:")
+    for pedido_str in relatorio["lista_pedidos_no_relatorio"]:
+        print(pedido_str)
