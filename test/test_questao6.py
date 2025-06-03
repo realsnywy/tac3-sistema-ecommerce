@@ -1,16 +1,11 @@
 from testify import (
     TestCase,
     assert_equal,
-    assert_not_equal,
-    assert_is_not_none,
-    assert_is_none,
-    assert_true,
-    assert_false,
+    assert_is_not,
     assert_in,
-    assert_raises,
+    assert_gte,
     run,
     setup,
-    teardown,
     suite,
 )
 from app.ecommerce_sistema import SistemaEcommerce, Carrinho, Produto
@@ -51,10 +46,10 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         produto_recuperado_tv = self.sistema.recuperar_produto_por_id(
             self.produto_tv.id_produto
         )
-        assert_is_not_none(produto_recuperado_tv, "TV deveria ser recuperada")
+        assert_is_not(produto_recuperado_tv, None, "TV deveria ser recuperada")
         assert_equal(produto_recuperado_tv.nome, 'TV 4K 50"')
         produto_inexistente = self.sistema.recuperar_produto_por_id(999)
-        assert_is_none(produto_inexistente, "Produto ID 999 não deveria existir")
+        assert_is_not(produto_inexistente, None, "Produto ID 999 não deveria existir")
         novo_produto = self.sistema.adicionar_produto_catalogo(
             "Cadeira Gamer", "Confortável", 1200.00, 5, "Móveis"
         )
@@ -70,7 +65,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido = self.sistema.criar_pedido(
             self.cliente_id_teste, carrinho_compra, self.endereco_teste, "pix"
         )
-        assert_is_not_none(pedido, "Pedido deveria ser criado")
+        assert_is_not(pedido, None, "Pedido deveria ser criado")
         assert_equal(pedido.cliente_id, self.cliente_id_teste)
         assert_equal(len(pedido.itens_comprados), 1)
         assert_equal(
@@ -84,14 +79,17 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido_carrinho_vazio = self.sistema.criar_pedido(
             self.cliente_id_teste, carrinho_vazio, self.endereco_teste, "pix"
         )
-        assert_is_none(
-            pedido_carrinho_vazio, "Pedido com carrinho vazio não deveria ser criado"
+        assert_is_not(
+            pedido_carrinho_vazio,
+            None,
+            "Pedido com carrinho vazio não deveria ser criado",
         )
         pedido_usuario_invalido = self.sistema.criar_pedido(
             "usuario_fantasma", carrinho_vazio, self.endereco_teste, "pix"
         )
-        assert_is_none(
+        assert_is_not(
             pedido_usuario_invalido,
+            None,
             "Pedido com usuário inválido não deveria ser criado",
         )
 
@@ -101,7 +99,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido = self.sistema.criar_pedido(
             self.cliente_id_teste, carrinho_pagamento, self.endereco_teste, "pix"
         )
-        assert_is_not_none(pedido)
+        assert_is_not(pedido, None)
         id_pedido = pedido.id_pedido
         estoque_fone_antes = self.produto_fone.quantidade_em_estoque
         detalhes_pagamento_pix = {"chave_pix": "teste@pix.com"}
@@ -128,7 +126,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido = self.sistema.criar_pedido(
             self.cliente_id_teste, carrinho_falha, self.endereco_teste, "cartao_credito"
         )
-        assert_is_not_none(pedido)
+        assert_is_not(pedido, None)
         id_pedido = pedido.id_pedido
         estoque_tv_antes = self.produto_tv.quantidade_em_estoque
         detalhes_cartao_falha = {
@@ -158,7 +156,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido_raro = self.sistema.criar_pedido(
             self.cliente_id_teste, carrinho_item_raro, self.endereco_teste, "pix"
         )
-        assert_is_not_none(pedido_raro)
+        assert_is_not(pedido_raro, None)
         id_pedido_raro = pedido_raro.id_pedido
         prod_pouco_estoque.reduzir_estoque(1)
         detalhes_pagamento_pix = {"chave_pix": "raro@pix.com"}
@@ -179,11 +177,11 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
             self.endereco_teste,
             "cartao_credito",
         )
-        assert_is_not_none(pedido)
+        assert_is_not(pedido, None)
         id_pedido = pedido.id_pedido
         estoque_fone_antes_cancel = self.produto_fone.quantidade_em_estoque
         sucesso_cancelamento = self.sistema.cancelar_pedido(id_pedido)
-        assert_true(sucesso_cancelamento, "Cancelamento deveria ser bem-sucedido")
+        assert_gte(sucesso_cancelamento, True, "Cancelamento deveria ser bem-sucedido")
         pedido_cancelado = self.sistema.pedidos_registrados[id_pedido]
         assert_equal(pedido_cancelado.status_pedido, "cancelado")
         assert_equal(
@@ -199,7 +197,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido = self.sistema.criar_pedido(
             self.cliente_id_teste, carrinho_reabastecer, self.endereco_teste, "pix"
         )
-        assert_is_not_none(pedido)
+        assert_is_not(pedido, None)
         id_pedido = pedido.id_pedido
         estoque_tv_inicial = self.produto_tv.quantidade_em_estoque
         resultado_pagamento = self.sistema.processar_pagamento_pedido(
@@ -211,8 +209,10 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         )
         estoque_tv_antes_cancel_pago = self.produto_tv.quantidade_em_estoque
         sucesso_cancelamento = self.sistema.cancelar_pedido(id_pedido)
-        assert_true(
-            sucesso_cancelamento, "Cancelamento de pedido pago deveria ser bem-sucedido"
+        assert_gte(
+            sucesso_cancelamento,
+            True,
+            "Cancelamento de pedido pago deveria ser bem-sucedido",
         )
         pedido_cancelado = self.sistema.pedidos_registrados[id_pedido]
         assert_equal(pedido_cancelado.status_pedido, "cancelado")

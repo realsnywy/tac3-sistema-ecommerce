@@ -1,5 +1,5 @@
 import time
-from testify import TestCase, assert_true, run, setup, suite
+from testify import TestCase, assert_gte, run, setup, suite
 from app.ecommerce_sistema import SistemaEcommerce, Carrinho, Produto
 
 NUM_PRODUTOS_CARRINHO_PERF_TF = 500
@@ -33,7 +33,7 @@ class TestPerformanceTestifyQuestao10(TestCase):
             print(
                 "\n[Testify] SKIP: Sem produtos no catálogo para teste de performance do carrinho TF."
             )
-            assert_true(True)  # Passa o teste se não há o que testar
+            assert_gte(1, 1)  # Passa o teste se não há o que testar
             return
 
         carrinho = Carrinho()
@@ -50,8 +50,9 @@ class TestPerformanceTestifyQuestao10(TestCase):
         print(
             f"\n[Testify] Adicionar {NUM_PRODUTOS_CARRINHO_PERF_TF} itens ao carrinho levou: {tempo_gasto:.6f}s"
         )
-        assert_true(
-            len(carrinho.get_itens()) > 0 or NUM_PRODUTOS_CARRINHO_PERF_TF == 0,
+        assert_gte(
+            len(carrinho.get_itens()),
+            1 if NUM_PRODUTOS_CARRINHO_PERF_TF > 0 else 0,
             "Carrinho TF deveria ter itens.",
         )
 
@@ -60,7 +61,7 @@ class TestPerformanceTestifyQuestao10(TestCase):
             print(
                 "\n[Testify] SKIP: Sem produtos para criar pedidos para teste de performance de pagamento TF."
             )
-            assert_true(True)
+            assert_gte(1, 1)
             return
 
         pedidos_ids = []
@@ -80,7 +81,7 @@ class TestPerformanceTestifyQuestao10(TestCase):
             print(
                 "\n[Testify] SKIP: Não foi possível criar pedidos para o teste de performance de pagamento TF."
             )
-            assert_true(True)
+            assert_gte(1, 1)
             return
 
         start_time = time.perf_counter()
@@ -96,8 +97,9 @@ class TestPerformanceTestifyQuestao10(TestCase):
         print(
             f"\n[Testify] Processar {len(pedidos_ids)} pagamentos ({pagamentos_bem_sucedidos} aprovados) sequenciais levou: {tempo_gasto:.6f}s"
         )
-        assert_true(
-            pagamentos_bem_sucedidos > 0 or not pedidos_ids,
+        assert_gte(
+            pagamentos_bem_sucedidos,
+            1 if pedidos_ids else 0,
             "Algum pagamento TF deveria ter sido processado.",
         )
 
@@ -106,7 +108,7 @@ class TestPerformanceTestifyQuestao10(TestCase):
             print(
                 "\n[Testify] SKIP: Sem produtos para teste de performance de criação de pedidos TF."
             )
-            assert_true(True)
+            assert_gte(1, 1)
             return
 
         start_time = time.perf_counter()
@@ -129,8 +131,9 @@ class TestPerformanceTestifyQuestao10(TestCase):
         print(
             f"\n[Testify] Criar {pedidos_criados_efetivamente} pedidos sequenciais levou: {tempo_gasto:.6f}s"
         )
-        assert_true(
-            pedidos_criados_efetivamente > 0 or NUM_PEDIDOS_VOLUME_PERF_TF == 0,
+        assert_gte(
+            pedidos_criados_efetivamente,
+            1 if NUM_PEDIDOS_VOLUME_PERF_TF > 0 else 0,
             "Algum pedido TF deveria ter sido criado.",
         )
 

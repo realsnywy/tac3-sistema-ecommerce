@@ -5,7 +5,7 @@ from testify import (
     run,
     setup,
     suite,
-    assert_is_not_none,
+    assert_is_not,
 )
 from app.ecommerce_sistema import SistemaEcommerce, Carrinho, Produto
 
@@ -92,7 +92,7 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
             pedido = self.sistema.criar_pedido(
                 self.cliente_id, carrinho, self.endereco_padrao, "cartao_credito"
             )
-            assert_is_not_none(pedido, f"{mensagem_erro} - Criação de pedido falhou")
+            assert_is_not(pedido, None, f"{mensagem_erro} - Criação de pedido falhou")
             id_pedido = pedido.id_pedido
 
             detalhes_pagamento = {
@@ -144,8 +144,8 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
             pedido = self.sistema.criar_pedido(
                 self.cliente_id, carrinho, self.endereco_padrao, "pix"
             )
-            assert_is_not_none(
-                pedido, f"{mensagem_erro} - Criação de pedido PIX falhou"
+            assert_is_not(
+                pedido, None, f"{mensagem_erro} - Criação de pedido PIX falhou"
             )
             id_pedido = pedido.id_pedido
 
@@ -212,7 +212,7 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
             pedido = self.sistema.criar_pedido(
                 self.cliente_id, carrinho, self.endereco_padrao, "cartao_credito"
             )
-            assert_is_not_none(pedido, f"{mensagem_erro} - Criação de pedido falhou")
+            assert_is_not(pedido, None, f"{mensagem_erro} - Criação de pedido falhou")
             id_pedido = pedido.id_pedido
 
             detalhes_pagamento = {
