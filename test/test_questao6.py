@@ -1,3 +1,7 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from testify import (
     TestCase,
     assert_equal,
@@ -49,7 +53,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         assert_is_not(produto_recuperado_tv, None, "TV deveria ser recuperada")
         assert_equal(produto_recuperado_tv.nome, 'TV 4K 50"')
         produto_inexistente = self.sistema.recuperar_produto_por_id(999)
-        assert_is_not(produto_inexistente, None, "Produto ID 999 não deveria existir")
+        assert_equal(produto_inexistente, None, "Produto ID 999 não deveria existir")
         novo_produto = self.sistema.adicionar_produto_catalogo(
             "Cadeira Gamer", "Confortável", 1200.00, 5, "Móveis"
         )
@@ -79,7 +83,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido_carrinho_vazio = self.sistema.criar_pedido(
             self.cliente_id_teste, carrinho_vazio, self.endereco_teste, "pix"
         )
-        assert_is_not(
+        assert_equal(
             pedido_carrinho_vazio,
             None,
             "Pedido com carrinho vazio não deveria ser criado",
@@ -87,7 +91,7 @@ class TestSistemaEcommerceComTestifyQuestao6(TestCase):
         pedido_usuario_invalido = self.sistema.criar_pedido(
             "usuario_fantasma", carrinho_vazio, self.endereco_teste, "pix"
         )
-        assert_is_not(
+        assert_equal(
             pedido_usuario_invalido,
             None,
             "Pedido com usuário inválido não deveria ser criado",

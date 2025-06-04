@@ -1,3 +1,7 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from testify import (
     TestCase,
     assert_equal,
@@ -55,34 +59,32 @@ class TestSistemaPagamentoComTestifyQuestao3(TestCase):
                 valor_original, 1
             )
         )
-        assert_almost_equal(total_1x, 1000.00, msg="Total 1x padrão")
-        assert_almost_equal(parcela_1x, 1000.00, msg="Parcela 1x padrão")
+        assert_almost_equal(total_1x, 1000.00, 2)
+        assert_almost_equal(parcela_1x, 1000.00, 2)
 
         total_3x, parcela_3x = (
             self.sistema_pagamento_padrao.calcular_valor_final_cartao_credito_parcelado(
                 valor_original, 3
             )
         )
-        assert_almost_equal(total_3x, 1050.00, msg="Total 3x padrão")
-        assert_almost_equal(parcela_3x, 350.00, msg="Parcela 3x padrão")
+        assert_almost_equal(total_3x, 1050.00, 2)
+        assert_almost_equal(parcela_3x, 350.00, 2)
 
         total_5x_altos, parcela_5x_altos = (
             self.sistema_pagamento_juros_altos.calcular_valor_final_cartao_credito_parcelado(
                 valor_original, 5
             )
         )
-        assert_almost_equal(total_5x_altos, 1100.00, msg="Total 5x juros altos")
-        assert_almost_equal(parcela_5x_altos, 220.00, msg="Parcela 5x juros altos")
+        assert_almost_equal(total_5x_altos, 1100.00, 2)
+        assert_almost_equal(parcela_5x_altos, 220.00, 2)
 
         total_6x_semj, parcela_6x_semj = (
             self.sistema_pagamento_sem_juros_sem_desconto.calcular_valor_final_cartao_credito_parcelado(
                 valor_original, 6
             )
         )
-        assert_almost_equal(total_6x_semj, 1000.00, msg="Total 6x sem juros")
-        assert_almost_equal(
-            parcela_6x_semj, round(1000.00 / 6, 2), msg="Parcela 6x sem juros"
-        )
+        assert_almost_equal(total_6x_semj, 1000.00, 2)
+        assert_almost_equal(parcela_6x_semj, round(1000.00 / 6, 2), 2)
 
         assert_raises(
             ValueError,
@@ -97,21 +99,21 @@ class TestSistemaPagamentoComTestifyQuestao3(TestCase):
         valor_pix_padrao = self.sistema_pagamento_padrao.calcular_valor_final_pix(
             valor_original
         )
-        assert_almost_equal(valor_pix_padrao, 180.00, msg="PIX padrão")
+        assert_almost_equal(valor_pix_padrao, 180.00, 2)
 
         valor_pix_maior_desc = (
             self.sistema_pagamento_desconto_maior_pix.calcular_valor_final_pix(
                 valor_original
             )
         )
-        assert_almost_equal(valor_pix_maior_desc, 170.00, msg="PIX desconto maior")
+        assert_almost_equal(valor_pix_maior_desc, 170.00, 2)
 
         valor_pix_sem_desc = (
             self.sistema_pagamento_sem_juros_sem_desconto.calcular_valor_final_pix(
                 valor_original
             )
         )
-        assert_almost_equal(valor_pix_sem_desc, 200.00, msg="PIX sem desconto")
+        assert_almost_equal(valor_pix_sem_desc, 200.00, 2)
 
         assert_raises(
             ValueError, self.sistema_pagamento_padrao.calcular_valor_final_pix, -100.00

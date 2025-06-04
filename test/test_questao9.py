@@ -1,3 +1,7 @@
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from testify import (
     TestCase,
     assert_equal,
@@ -74,18 +78,8 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
                 )
             )
             mensagem_erro = f"Erro para taxa de juros {taxa_juros*100}% (iteração {i})"
-            assert_almost_equal(
-                total_calculado,
-                total_esperado,
-                places=2,
-                msg=f"{mensagem_erro} - Total",
-            )
-            assert_almost_equal(
-                parcela_calculada,
-                parcela_esperada,
-                places=2,
-                msg=f"{mensagem_erro} - Parcela",
-            )
+            assert_almost_equal(total_calculado, total_esperado, 2)
+            assert_almost_equal(parcela_calculada, parcela_esperada, 2)
 
             carrinho = Carrinho()
             carrinho.adicionar_item(produto_teste_iter, 1)
@@ -109,12 +103,7 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
                 f"{mensagem_erro} - Processamento falhou: {resultado_processamento.get('mensagem')}",
             )
             pedido_processado = self.sistema.pedidos_registrados[id_pedido]
-            assert_almost_equal(
-                pedido_processado.valor_final_pago,
-                total_esperado,
-                places=2,
-                msg=f"{mensagem_erro} - Valor final pago no pedido",
-            )
+            assert_almost_equal(pedido_processado.valor_final_pago, total_esperado, 2)
 
             # Não é necessário limpar explicitamente o pedido se o sistema for recriado ou se os IDs de pedido forem sempre únicos
 
@@ -135,9 +124,7 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
                 valor_original
             )
             mensagem_erro = f"Erro para desconto PIX {desconto_pix*100}% (iteração {i})"
-            assert_almost_equal(
-                valor_calculado, final_esperado, places=2, msg=mensagem_erro
-            )
+            assert_almost_equal(valor_calculado, final_esperado, 2)
 
             carrinho = Carrinho()
             carrinho.adicionar_item(produto_teste_iter, 1)
@@ -160,12 +147,7 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
                 f"{mensagem_erro} - Processamento PIX falhou: {resultado_processamento.get('mensagem')}",
             )
             pedido_processado = self.sistema.pedidos_registrados[id_pedido]
-            assert_almost_equal(
-                pedido_processado.valor_final_pago,
-                final_esperado,
-                places=2,
-                msg=f"{mensagem_erro} - Valor final pago no pedido PIX",
-            )
+            assert_almost_equal(pedido_processado.valor_final_pago, final_esperado, 2)
 
     def test_diferentes_quantidades_de_parcelas_com_juros_fixos(self):
         valor_original = self.produto_base_template.preco
@@ -194,18 +176,8 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
             )
 
             mensagem_erro = f"Erro para {num_parcelas} parcelas com juros de {taxa_juros_fixa*100}% (iteração {i})"
-            assert_almost_equal(
-                total_calculado_iter,
-                total_esperado_iter,
-                places=2,
-                msg=f"{mensagem_erro} - Total",
-            )
-            assert_almost_equal(
-                parcela_calculada_iter,
-                parcela_esperada_iter,
-                places=2,
-                msg=f"{mensagem_erro} - Parcela",
-            )
+            assert_almost_equal(total_calculado_iter, total_esperado_iter, 2)
+            assert_almost_equal(parcela_calculada_iter, parcela_esperada_iter, 2)
 
             carrinho = Carrinho()
             carrinho.adicionar_item(produto_teste_iter, 1)
@@ -230,10 +202,7 @@ class TestSistemaConfiguracaoComTestifyQuestao9(TestCase):
             )
             pedido_processado = self.sistema.pedidos_registrados[id_pedido]
             assert_almost_equal(
-                pedido_processado.valor_final_pago,
-                total_esperado_iter,
-                places=2,
-                msg=f"{mensagem_erro} - Valor final pago no pedido",
+                pedido_processado.valor_final_pago, total_esperado_iter, 2
             )
 
 
